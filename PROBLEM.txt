@@ -1,0 +1,40 @@
+Arivale coding question
+
+
+Thanks for expressing interest in Arivale. Below, you’ll find a high level problem description. We’d like you to implement a full stack solution to this problem. You are free to use resources like the internet and books to help you. However, we do expect the solution to be your own work. 
+
+
+When you feel good about your solution, send it back to us. We’ll then invite you to discuss it with us in person.  
+
+
+The description below is not highly specific. We’d like you to make thoughtful assumptions in areas where requirements are unclear be prepared to talk to us about your decisions. 
+
+
+Problem description:
+When clients sign up for the Arivale service, they develop a 1:1 relationship with a wellness coach over the course of a year. These coaches help them interpret their personal health data as well as make actionable recommendations to improve a client’s overall wellness. Clients need to schedule coaching calls on a monthly basis. We want to create a web based experience that makes it easy for clients to schedule a call. Clients should be able to see their coach’s availability and then book hour long coaching slot. Once a slot is booked, other clients should not be able to book that slot with the same coach. 
+
+
+Frequently asked questions 
+
+
+What do you mean by full stack?
+Your solution include data storage (SQL, NoSQL, ORMs, flat files, jelly beans), API’s or a middle tier (Flask, Django, Rails, Sinatra, Node, etc), and a web based front end. Your goal should be to build enough to demonstrate the depth and breadth of your software development skills.  
+
+
+We recognize that most developers gravitate towards different parts of the stack. In fact, we’d expect you to make better decisions in the areas with you have greater expertise, and demonstrate an ability to quickly learn areas where you have little or no expertise. 
+
+
+How long should this take?
+How much effort you put into it is up to you, but we’d like to see your solution in a week or two. We recognize that you likely have a ton of other commitments in your life. Put enough effort in this project so that 1) we can view you in your best light and 2) you can understand if you like working on an ambiguous, full stack problem.  The problem description above is very small, but you could easily add functionality to change/cancel appointments, sync with external calendars, send reminders, etc. 
+
+
+
+
+What tech stack should I use?
+It’s up to you. At Arivale, we currently use Postgres for the database, haven’t made up our minds on an ORM, use Flask for the middle tier, and use AngularJS on the front end (we treat the website like any other client application).  Use whatever makes you most productive and what allows you to demonstrate your expertise.
+
+
+What are you looking for?
+We assume that you can create a functionally correct solution. Beyond that, we strongly prefer quality over quantity, simplicity over complexity, and readability over cleverness. 
+
+

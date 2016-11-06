@@ -1,0 +1,8 @@
+# Vim backups 
+*.bak
+
+# compiled python files
+*.pyc
+
+# virtualenv
+venv/*
