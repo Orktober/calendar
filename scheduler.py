@@ -17,6 +17,22 @@ from models.customer import Customer
 app = Flask(__name__)
 
 
+# Some systems / redirects that I assume would exist
+# If the user is unrecognized, redirect them to a signup page
+@app.route('/signup')
+def signup_user():
+    return render_template('signup_user.html')
+
+# If the user clicks on the "Need help?" link, redirect to a dummy help page
+@app.route('/help')
+def help():
+    return render_template('help.html')
+
+# If the user clicks on the timezone explanation page
+@app.route('/help/timezone')
+def timezone_help():
+    return render_template('timezone.html')
+
 def get_availability(coach_id):
     appointments = []
     now = datetime.datetime.now().date()
@@ -31,9 +47,33 @@ def get_availability(coach_id):
         ptr += one_day
     return appointments
 
-DISPLAY_TIMES = ['Midnight', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM', '8 AM',
-        '9 AM', '10 AM', '11 AM', 'Noon', '1 PM', '2 PM', '3 PM', '4 PM',
-        '5 PM', '6 PM', '7 PM', '8 PM', '9 PM', '10 PM', '11 PM', 'Midnight']
+DISPLAY_TIMES = [
+    'Midnight',
+    '1 AM',
+    '2 AM',
+    '3 AM',
+    '4 AM',
+    '5 AM',
+    '6 AM',
+    '7 AM',
+    '8 AM',
+    '9 AM',
+    '10 AM',
+    '11 AM',
+    'Noon',
+    '1 PM',
+    '2 PM',
+    '3 PM',
+    '4 PM',
+    '5 PM',
+    '6 PM',
+    '7 PM',
+    '8 PM',
+    '9 PM',
+    '10 PM',
+    '11 PM',
+    'Midnight'
+    ]
 def get_display_times(customer_tz, coach_tz):
     '''
     Customer is reserving times in their own timezone.
@@ -44,22 +84,16 @@ def get_display_times(customer_tz, coach_tz):
     '''
     offset = get_timezone_offset(customer_tz, coach_tz)
     print(offset)
-    return DISPLAY_TIMES[9+offset:17+offset]
+    return DISPLAY_TIMES[9-offset:17-offset]
 
 def get_timezone_offset(tz1, tz2):
-    now = datetime.datetime.now(tz=pytz.utc)
-    t1 = now.astimezone(pytz.timezone(tz1))
-    t2 = now.astimezone(pytz.timezone(tz2))
-    print(t1)
-    print(t2)
+    now = datetime.datetime.utcnow()
+    t1 = pytz.timezone(tz1).localize(now)
+    t2 = pytz.timezone(tz2).localize(now)
     delta = t1 - t2
-    return int(delta.seconds / 3600)
+    return int(delta.days * 24 + delta.seconds / 3600)
 
 
-# Some external systems that I assume would exist
-@app.route('/signup')
-def unrecognized_user():
-    return render_template('signup_user.html')
 
 @app.route('/appointment/<customer_id>')
 def index(customer_id):
@@ -88,10 +122,8 @@ def index(customer_id):
 
     hours = get_display_times(customer['tzname'], coach['tzname'])
     days = get_availability(coach['email'])
-    print(hours)
-    print(days)
 
-    tz_different = (coach['tzname'] != coach['tzname'])
+    tz_different = (coach['tzname'] != customer ['tzname'])
     return render_template(
         'reservation_base.html',
         customername=customername,

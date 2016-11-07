@@ -17,28 +17,25 @@
     <thead>
         <tr>
             <th>Appointment Time</th>
-            <th>Sun</th>
-            <th>Mon</th>
-            <th>Tue</th>
-            <th>Wed</th>
-            <th>Thu</th>
-            <th>Fri</th>
-            <th>Sat</th>
+                {% for dayobj in days %}
+                <th>{{dayobj.display_date}}</th>
+                {% endfor %}
         </tr>
     <tbody>
         {% for hour in hours %}
             <tr>
                 <td>{{hour}}</td>
-                {% set outer_loop = loop %}
+                {% set slot = loop.index - 1%}
+            
                 {% for dayobj in days %}
-                    {% if not dayobj.slots[outer_loop.index-1] %}
+                    {% if not dayobj.slots[slot] %}
                     <td><a href='{{url_for('book', coach_id=coach_id,
                     customer_id=customer_id, year=dayobj.year, month=dayobj.month,
-                     day=dayobj.day, slot=outer_loop.index-1)}}'>Book Now!</a></td>
-            {% elif customer_id==dayobj.slots[outer_loop.index-1]%}
+                     day=dayobj.day, slot=slot)}}'>Book Now!</a></td>
+            {% elif customer_id==dayobj.slots[slot]%}
                     <td><a href='{{url_for('unbook', coach_id=coach_id,
                     customer_id=customer_id, year=dayobj.year, month=dayobj.month,
-                     day=dayobj.day, slot=outer_loop.index-1)}}'>Unbook</a></td>
+                     day=dayobj.day, slot=slot)}}'>Unbook</a></td>
                     {% else %}
                         <td class="text-muted">Unavailable</td>
                     {% endif %}
