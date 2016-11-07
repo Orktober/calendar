@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+<a class="btn btn-default">Weekly</a> 
+<a class="btn btn-default">Monthly</a> 
+<a class="btn btn-default">List</a>
+<div class="pull-right"> Logged in as {{customeremail}} </div>
+</div>
+
+<!-- Centered Calender Headers -->
+<h1 class="text-center">{{coachname}}</h1>
+<h3 class="text-center">Availability for {{month}} {{year}}</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Appointment Time</th>
+            <th>Sun</th>
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
+        </tr>
+    <tbody>
+        {% for hour in hours %}
+            <tr>
+                <td>{{hour}}</td>
+                {% set outer_loop = loop %}
+                {% for dayobj in days %}
+                    {% if not dayobj.slots[outer_loop.index-1] %}
+                    <td><a href='{{url_for('book', coach_id=coach_id,
+                    customer_id=customer_id, year=dayobj.year, month=dayobj.month,
+                     day=dayobj.day, slot=outer_loop.index-1)}}'>Book Now!</a></td>
+            {% elif customer_id==dayobj.slots[outer_loop.index-1]%}
+                    <td><a href='{{url_for('unbook', coach_id=coach_id,
+                    customer_id=customer_id, year=dayobj.year, month=dayobj.month,
+                     day=dayobj.day, slot=outer_loop.index-1)}}'>Unbook</a></td>
+                    {% else %}
+                        <td class="text-muted">Unavailable</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+                            {% endfor %}
+    </tbody>
+</table>
+
+
+<div class="row">
+    {% if tz_different %}
+    <a>Why isn't my coach available at 9am?</a>
+    {% endif %}
+    <a>Need help?</a>
+{% endblock %}

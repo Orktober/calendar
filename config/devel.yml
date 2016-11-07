@@ -1,0 +1,7 @@
+APP_DB: calendar
+
+COACH_COLL: coach
+CUSTOMER_COLL: customer
+CALENDAR_COLL: calendar
+HOLIDAY_COLL: holiday
+AVAILABILITY_COLL: availability_days
