@@ -33,13 +33,21 @@ def help():
 def timezone_help():
     return render_template('timezone.html')
 
-def get_availability(coach_id):
-    appointments = []
-    now = datetime.datetime.now().date()
+def get_availability(coach_id, customer_time, week_offset):
+    '''
+    customer time is current time in customer timezone
+    take that time, set it to the beginning of this week, and add 7*weeks_offset
+    to get the week that the customer has requested
+    '''
 
-    weekday = now.weekday()
-    delta = datetime.timedelta(days=-1 *weekday)
-    beginning_of_week = now + delta
+    appointments = []
+    # todo see if customer's time is past coach's last time for today, aand if
+    # this is the last day of the week - advance one week
+    customer_date = customer_time.date()
+
+    weekday = customer_date.weekday()
+    delta = datetime.timedelta(days=(-1 *weekday) + (7*week_offset))
+    beginning_of_week = customer_date + delta
     ptr = beginning_of_week
     one_day = datetime.timedelta(days=1)
     for i in range(7):
@@ -74,7 +82,7 @@ DISPLAY_TIMES = [
     '11 PM',
     'Midnight'
     ]
-def get_display_times(customer_tz, coach_tz):
+def get_display_times(cust_time, coach_time):
     '''
     Customer is reserving times in their own timezone.
 
@@ -82,21 +90,17 @@ def get_display_times(customer_tz, coach_tz):
 
     Bookable times are [9..5] + (customer timezone - coach timezone)
     '''
-    offset = get_timezone_offset(customer_tz, coach_tz)
-    print(offset)
+    offset = get_timezone_offset(cust_time, coach_time)
     return DISPLAY_TIMES[9-offset:17-offset]
 
-def get_timezone_offset(tz1, tz2):
-    now = datetime.datetime.utcnow()
-    t1 = pytz.timezone(tz1).localize(now)
-    t2 = pytz.timezone(tz2).localize(now)
+def get_timezone_offset(t1, t2):
     delta = t1 - t2
     return int(delta.days * 24 + delta.seconds / 3600)
 
 
 
-@app.route('/appointment/<customer_id>')
-def index(customer_id):
+@app.route('/appointment/<customer_id>/<int:offset>')
+def appointment_page(customer_id, offset):
     '''
     This endpoint
     - look up coach for user
@@ -109,7 +113,6 @@ def index(customer_id):
     if not coach:
         return redirect(url_for('unrecognized_user'))
 
-    print(coach)
     coachname = coach.display_name
 
     customername = customer.display_name
@@ -119,9 +122,10 @@ def index(customer_id):
     month = now.month
     year = now.year
 
-
-    hours = get_display_times(customer['tzname'], coach['tzname'])
-    days = get_availability(coach['email'])
+    customer_time = customer.to_timezone(now)
+    coach_time = coach.to_timezone(now)
+    hours = get_display_times(customer_time, coach_time)
+    days = get_availability(coach['email'], customer_time, offset)
 
     tz_different = (coach['tzname'] != customer ['tzname'])
     return render_template(
@@ -135,7 +139,8 @@ def index(customer_id):
         year=year,
         tz_different=tz_different,
         hours=hours,
-        days=days
+        days=days,
+        offset=offset
     )
 
 @app.route('/book/<coach_id>/<customer_id>/<int:year>/<int:month>/<int:day>/<int:slot>')

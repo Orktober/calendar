@@ -13,6 +13,11 @@
 <h1 class="text-center">{{coachname}}</h1>
 <h3 class="text-center">Availability for {{month}} {{year}}</h3>
 
+{% if offset > 0 %}
+<a href='{{url_for("appointment_page", customer_id=customer_id,
+offset=offset-1)}}'>Previous Week</a>
+{% endif %}
+<a href='{{url_for("appointment_page", customer_id=customer_id, offset=offset+1)}}'>Next Week</a>
 <table class="table">
     <thead>
         <tr>

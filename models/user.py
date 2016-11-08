@@ -1,6 +1,7 @@
 '''
 Base class that represents a user of the system
 '''
+import pytz
 from models.base_document import BaseDocument
 
 class User(BaseDocument):
@@ -17,3 +18,5 @@ class User(BaseDocument):
         return '{first} {last}'.format(first=self['firstname'],
         last=self['lastname'])
 
+    def to_timezone(self, t):
+        return t.astimezone(pytz.timezone(self['tzname']))
