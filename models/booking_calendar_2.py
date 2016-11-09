@@ -91,8 +91,6 @@ class CalendarDay(object):
 
         )
         conv = pytz.timezone(tz).localize(conv)
-        print('Slottime')
-        print(conv)
         return conv
 
     def available(self, slot):
@@ -192,8 +190,6 @@ class CalendarDay(object):
         # object, we have to use a datetime with hours, min, secs set to 0
         _from = datetime.datetime(year=_from.year, month=_from.month, day=_from.day)
         to = datetime.datetime(year=to.year, month=to.month, day=to.day)
-        print(_from)
-        print(to)
 
         availabilities = []
         while _from < to:
