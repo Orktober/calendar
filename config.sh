@@ -1,4 +1,4 @@
-#!/usr/local/bin/fish
+#!/bin/bash
 
-set -x ENV 'devel'
-set -x MONGO_URI 'mongodb://localhost:27017'
+export ENV='devel'
+export MONGO_URI='mongodb://localhost:27017'
