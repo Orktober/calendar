@@ -8,10 +8,8 @@ class User(BaseDocument):
 
     fields = ('firstname', 'lastname', 'email', 'tzname')
 
-    def __init__(self, email, **kwargs):
-        kwargs['email'] = email
-
-        BaseDocument.__init__(self, email, **kwargs)
+    def __init__(self, _id, **kwargs):
+        BaseDocument.__init__(self, _id, **kwargs)
 
     @property
     def display_name(self):

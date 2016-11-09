@@ -3,7 +3,6 @@ import calendar
 import datetime
 
 from bson.objectid import ObjectId
-from utils import to_display_month
 from settings import availability_coll as coll
 from models.base_document import BaseDocument
 from models.coach import Coach
@@ -198,7 +197,7 @@ class CalendarDay(object):
 
         availabilities = []
         while _from < to:
-            query = { 'date': {'$eq' : _from }}
+            query = { 'date': {'$eq' : _from }, 'coach' : {'$eq': coach}}
             data  = coll.find_one(query, projection={'coach': 0, 'date': 0})
             if not data:
                 data = {}

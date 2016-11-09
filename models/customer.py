@@ -14,8 +14,8 @@ class Customer(User):
     fields = User.fields + ('customer_from', 'customer_to', 'coach_id')
     coll   = customer_coll
 
-    def __init__(self, email, **kwargs):
-        User.__init__(self, email, **kwargs)
+    def __init__(self, _id, **kwargs):
+        User.__init__(self, _id, **kwargs)
 
     def get_coach(self):
         '''Returns the coach assigned to this user'''

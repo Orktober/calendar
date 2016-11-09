@@ -9,8 +9,7 @@ class Coach(User):
     coll   = coach_coll
     fields = User.fields + ('availability',)
 
-    def __init__(self, email, **kwargs):
-
-        User.__init__(self, email, **kwargs)
+    def __init__(self, _id, **kwargs):
+        User.__init__(self, _id, **kwargs)
 
 

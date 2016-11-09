@@ -1,5 +1,8 @@
 '''
-Contains the various connections for the app
+This file is used to set up connections or objects that will be shared
+throughout the app.
+
+For the calendar application, this is mainly database / collection objs.
 '''
 import pymongo
 
@@ -14,6 +17,4 @@ db = my_client[config.get('APP_DB')]
 # Various collections for server obejects
 coach_coll    = db[config.get('COACH_COLL')]
 customer_coll = db[config.get('CUSTOMER_COLL')]
-calendar_coll = db[config.get('CALENDAR_COLL')]
-holiday_coll  = db[config.get('HOLIDAY_COLL')]
 availability_coll = db[config.get('AVAILABILITY_COLL')]

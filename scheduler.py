@@ -7,7 +7,6 @@ import datetime
 import time_utils
 
 from flask import Flask, render_template, redirect, url_for
-from utils import to_display_month
 
 from models.booking_calendar_2 import CalendarDay
 from models.coach import Coach
@@ -35,18 +34,11 @@ def help():
 def timezone_help():
     return render_template('timezone.html')
 
-def get_availability_range(startdate, enddate):
-    '''
-    Gets availability between two dates
-    '''
-    # If the range spans multiple months
-    pass
-
-
-
 def get_monthly_availability(coach, customer_time, week_offset):
     '''
     Gets availability for the whole month
+
+    Will implement if time by uisng monthrange function
     '''
     pass
 
@@ -59,8 +51,6 @@ def get_weekly_availability(coach, customer_time, week_offset):
     to get the week that the customer has requested
     '''
 
-    # todo see if customer's time is past coach's last time for today, aand if
-    # this is the last day of the week - advance one week
     weekday = customer_time.weekday()
 
     # This delta will create a datetime that's at the beginning of week N
@@ -77,24 +67,24 @@ def get_weekly_availability(coach, customer_time, week_offset):
 def home(customerid):
     return redirect(url_for('appointment_page', customerid=customerid, offset=0))
 
+
 @app.route('/appt/<customerid>/<int:offset>')
 def appointment_page(customerid, offset):
     '''
     This endpoint
-    - look up coach for user
-    - get month, year
-    - see if coach and user are in different timezones
+    - Retrieves the coach for the incoming customer
+    - Gets a range of availability objects (currently one week)
     '''
 
     customer = Customer(customerid)
     coach = customer.get_coach()
     if not coach:
-        return redirect(url_for('unrecognized_user'))
+        return redirect(url_for('signup_user'))
 
     now = time_utils.utcnow()
     customer_time = customer.to_timezone(now)
 
-    days = get_weekly_availability(coach['email'], customer_time, offset)
+    days = get_weekly_availability(coach['_id'], customer_time, offset)
 
     return render_template(
         'reservation_base.html',
@@ -106,6 +96,7 @@ def appointment_page(customerid, offset):
 
 @app.route('/book/<_id>/<customer>/<int:slot>')
 def book(_id, customer, slot):
+    '''Books a spot on a customer's coach's calendar'''
     c = CalendarDay.lookup_by_id(_id)
     success = c.book(customer, slot)
     if success:
@@ -117,10 +108,9 @@ def book(_id, customer, slot):
 
 @app.route('/unbook/<_id>/<customer>/<int:slot>')
 def unbook(_id, customer, slot):
+    '''Unbooks a slot on a coach's calendar'''
     success = CalendarDay.lookup_by_id(_id).unbook(slot)
     return redirect(url_for('home', customerid=customer, error=True))
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
