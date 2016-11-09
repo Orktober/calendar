@@ -37,7 +37,9 @@ class CalendarDay(object):
         self.appt_ct = appt_ct
 
         # Store this for convienence
-        self.timezone = Coach(coach)['tzname']
+        c = Coach(coach)
+        self.timezone = c['tzname']
+        self.availability = c['availability']
 
     def update_state(self, data):
         '''Updates this object with possible new data from the db
@@ -96,7 +98,11 @@ class CalendarDay(object):
     def available(self, slot):
         slot_time = self.get_slot_time(slot)
         now = datetime.datetime.now(tz=pytz.utc)
-        return now < slot_time and self.slots[slot] is None
+
+        slot_time_day = slot_time.weekday()
+        coach_available_on_day = self.availability[slot_time_day]
+
+        return coach_available_on_day and now < slot_time and self.slots[slot] is None
 
     def booked_by(self, slot, user):
         return self.slots[slot] == user

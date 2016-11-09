@@ -37,8 +37,10 @@ def create_customer(_id, email, firstname, lastname, tz, coach_id):
 
 # Creates 2 sample coaches and 4 sample customers with timezone matches or mismatches
 if __name__ == '__main__':
+    # Joe doesn't work on the weekends
     create_coach('joe', 'joe.smith@company.com', 'Joe', 'Smith', 'US/Eastern', [True, True, True,
         True, True, False, False])
+    # Ella does
     create_coach('ella', 'ella.firth@company.com', 'Ella', 'Firth', 'US/Pacific', [True] * 7)
 
     create_customer('zeke', 'zeke@example.com', 'Zeke', 'Bass', 'US/Eastern', 'ella')
