@@ -3,44 +3,39 @@
 {% block content %}
 
 <div class="row">
-<a class="btn btn-default">Weekly</a> 
-<a class="btn btn-default">Monthly</a> 
-<a class="btn btn-default">List</a>
-<div class="pull-right"> Logged in as {{customeremail}} </div>
+    <a class="btn btn-default">Weekly</a> 
+    <a class="btn btn-default">List</a>
+    <div class="pull-right"> Logged in as {{customer.email}} </div>
 </div>
 
 <!-- Centered Calender Headers -->
-<h1 class="text-center">{{coachname}}</h1>
-<h3 class="text-center">Availability for {{month}} {{year}}</h3>
+<h3 class="text-center">Schedule an appointment with</h3>
+<h2 class="text-center">{{coach.display_name}}</h2>
 
 {% if offset > 0 %}
-<a href='{{url_for("appointment_page", customer_id=customer_id,
-offset=offset-1)}}'>Previous Week</a>
+<a href='{{url_for("appointment_page", customerid=customer._id, offset=offset-1)}}'>&lt;&lt;Previous Week</a>
 {% endif %}
-<a href='{{url_for("appointment_page", customer_id=customer_id, offset=offset+1)}}'>Next Week</a>
+<a class='pull-right' href='{{url_for("appointment_page", customerid=customer._id,
+offset=offset+1)}}'>Next Week&gt;&gt;</a>
 <table class="table">
     <thead>
         <tr>
             <th>Appointment Time</th>
-                {% for dayobj in days %}
-                <th>{{dayobj.display_date}}</th>
-                {% endfor %}
+            {% for day in days %}
+                <th>{{day.display_date}}</th>
+            {% endfor %}
         </tr>
     <tbody>
-        {% for hour in hours %}
+        {% for hour in days.0.display_times_as_timezone(customer.tzname)%}
             <tr>
                 <td>{{hour}}</td>
                 {% set slot = loop.index - 1%}
             
-                {% for dayobj in days %}
-                    {% if not dayobj.slots[slot] %}
-                    <td><a href='{{url_for('book', coach_id=coach_id,
-                    customer_id=customer_id, year=dayobj.year, month=dayobj.month,
-                     day=dayobj.day, slot=slot)}}'>Book Now!</a></td>
-            {% elif customer_id==dayobj.slots[slot]%}
-                    <td><a href='{{url_for('unbook', coach_id=coach_id,
-                    customer_id=customer_id, year=dayobj.year, month=dayobj.month,
-                     day=dayobj.day, slot=slot)}}'>Unbook</a></td>
+                {% for day in days %}
+                    {% if day.available(slot) %}
+                        <td><a href='{{url_for('book', customer=customer._id, _id=day._id, slot=slot)}}'>Book Now!</a></td>
+                    {% elif day.booked_by(slot, customer._id) %}
+                        <td><a href='{{url_for('unbook', customer=customer._id, _id=day._id, slot=slot)}}'>Unbook</a></td>
                     {% else %}
                         <td class="text-muted">Unavailable</td>
                     {% endif %}
@@ -52,8 +47,11 @@ offset=offset-1)}}'>Previous Week</a>
 
 
 <div class="row">
-    {% if tz_different %}
-    <a>Why isn't my coach available at 9am?</a>
+    {% if customer.tzname != coach.tzname %}
+    <a href="/help/timezone">Why isn't my coach available at 9am?</a>
     {% endif %}
-    <a>Need help?</a>
+    <a class="pull-right" href="/help">Need help?</a>
+</div>
+
 {% endblock %}
+
